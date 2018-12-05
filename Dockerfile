@@ -13,8 +13,8 @@ RUN \
 WORKDIR /etc/apt/sources.list.d
 RUN echo "deb https://packages.sury.org/php/ stretch main" > phpsury.list && \
     echo "deb-src https://packages.sury.org/php/ stretch main" >> phpsury.list && \
-    apt-get install -y wget ca-certificates apt-transport-https && \
-    wget -q https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg
+    apt-get install -y wget && \
+    wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg
 
 WORKDIR /
 RUN \
