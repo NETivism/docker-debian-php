@@ -91,10 +91,12 @@ ENV \
 
 #xdebug
 RUN \
+  mkdir -p /var/www/html/log/xdebug && \
   apt-get install -y php7.2-cgi net-tools && \
   pecl install xdebug && \
   bash -c "echo extension=/usr/lib/php/20170718/xdebug.so > /etc/php/7.2/mods-available/xdebug.ini" && \
-  bash -c "phpenmod xdebug"
+  bash -c "phpenmod xdebug" && \
+  cp -f /home/docker/php/develop.ini /etc/php/7.2/develop.ini
 
 #phpunit
 RUN \
