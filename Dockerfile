@@ -86,7 +86,8 @@ RUN \
 
 ### develop tools
 ENV \
-  PATH=$PATH:/root/phpunit
+  PATH=$PATH:/root/phpunit \
+  PHANTOMJS_VERSION=1.9.7
 
 #xdebug
 RUN \
@@ -97,7 +98,7 @@ RUN \
 
 #phpunit
 RUN \
-  mkdir -p phpunit/extensions && \
+  mkdir -p /root/phpunit/extensions && \
   wget -O /root/phpunit/phpunit https://phar.phpunit.de/phpunit-7.phar && \
   chmod +x /root/phpunit/phpunit && \
   wget -O /root/phpunit/extensions/dbunit.phar https://phar.phpunit.de/dbunit.phar && \
