@@ -49,9 +49,11 @@ RUN apt-get install -y supervisor procps
 WORKDIR /tmp
 RUN \
   apt-get install -y fonts-noto-cjk fontconfig ca-certificates fontconfig libc6 libfreetype6 libjpeg62-turbo libpng16-16 libssl1.1 libstdc++6 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi xfonts-base zlib1g && \
-  wget -nv https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb -O wkhtmltox.deb && \
-  dpkg -i wkhtmltox.deb && \
-  rm -f wkhtmltox.deb
+  wget -nv https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz -O wkhtmltox.tar.xz && \
+  tar xf wkhtmltox.tar.xz && \
+  rm -f wkhtmltox.tar.xz && \
+  mv wkhtmltox/bin/wkhtmlto* /usr/local/bin/ && \
+  apt-get clean && rm -rf /tmp/wkhtmltox
 
 # php mcrypt
 RUN \
@@ -78,9 +80,9 @@ RUN \
   sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/7.2/fpm/pool.d/www.conf && \
   sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/7.2/fpm/pool.d/www.conf
 
-ADD container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
-ADD container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
-ADD container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
+COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
+COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN \
   mkdir -p /run/php && chmod 777 /run/php
 
