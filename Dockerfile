@@ -133,3 +133,4 @@ RUN \
 WORKDIR /var/www/html
 ENV TERM=xterm
 CMD ["/usr/bin/supervisord"]
+
