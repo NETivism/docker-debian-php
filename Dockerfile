@@ -1,4 +1,4 @@
-FROM netivism/docker-debian-base
+FROM netivism/docker-debian-base:buster
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
@@ -10,8 +10,8 @@ WORKDIR /etc/apt/sources.list.d
 RUN \
     apt-get update && \
     apt-get install -y apt-transport-https wget gnupg && \
-    echo "deb https://packages.sury.org/php/ stretch main" > phpsury.list && \
-    echo "deb-src https://packages.sury.org/php/ stretch main" >> phpsury.list && \
+    echo "deb https://packages.sury.org/php/ buster main" > phpsury.list && \
+    echo "deb-src https://packages.sury.org/php/ buster main" >> phpsury.list && \
     wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
     apt-get update && \
     apt-get install -y wget mariadb-server gcc make autoconf libc-dev pkg-config
@@ -90,6 +90,13 @@ COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
 COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN \
   mkdir -p /run/php && chmod 777 /run/php
+
+RUN \
+  echo "source /usr/share/vim/vim80/defaults.vim" > /etc/vim/vimrc.local && \
+  echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
+  echo "if has('mouse')" >> /etc/vim/vimrc.local && \
+  echo "  set mouse=" >> /etc/vim/vimrc.local && \
+  echo "endif" >> /etc/vim/vimrc.local
 
 ### END
 WORKDIR /var/www/html
