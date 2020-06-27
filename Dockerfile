@@ -62,10 +62,6 @@ RUN \
   bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.3/mods-available/mcrypt.ini" && \
   bash -c "phpenmod mcrypt"
 
-RUN \
-  apt-get remove -y php7.3-dev gcc make autoconf libc-dev pkg-config php-pear && \
-  apt-get autoremove -y && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ### PHP FPM Config
 # remove default enabled site
@@ -91,7 +87,7 @@ RUN \
   mkdir -p /run/php && chmod 777 /run/php
 
 RUN \
-  echo "source /usr/share/vim/vim80/defaults.vim" > /etc/vim/vimrc.local && \
+  echo "source /usr/share/vim/vim81/defaults.vim" > /etc/vim/vimrc.local && \
   echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
   echo "if has('mouse')" >> /etc/vim/vimrc.local && \
   echo "  set mouse=" >> /etc/vim/vimrc.local && \
@@ -105,6 +101,7 @@ ENV \
 #xdebug
 RUN \
   mkdir -p /var/www/html/log/xdebug && chown -R www-data:www-data /var/www/html/log/xdebug && \
+  apt-get update && \
   apt-get install -y php7.3-cgi net-tools && \
   pecl install xdebug && \
   bash -c "echo zend_extension=/usr/lib/php/20170718/xdebug.so > /etc/php/7.3/mods-available/xdebug.ini" && \
@@ -137,6 +134,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 RUN \
+  apt-get remove -y php7.3-dev gcc make autoconf libc-dev pkg-config php-pear && \
   apt-get autoremove -y && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
