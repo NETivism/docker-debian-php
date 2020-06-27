@@ -21,17 +21,17 @@ WORKDIR /
 RUN \
   apt-get install -y \
     rsyslog \
-    php7.2 \
-    php7.2-curl \
-    php7.2-imap \
-    php7.2-gd \
-    php7.2-mysql \
-    php7.2-mbstring \
-    php7.2-xml \
-    php7.2-memcached \
-    php7.2-cli \
-    php7.2-fpm \
-    php7.2-zip \
+    php7.4 \
+    php7.4-curl \
+    php7.4-imap \
+    php7.4-gd \
+    php7.4-mysql \
+    php7.4-mbstring \
+    php7.4-xml \
+    php7.4-memcached \
+    php7.4-cli \
+    php7.4-fpm \
+    php7.4-zip \
     curl \
     vim \
     git-core
@@ -57,13 +57,13 @@ RUN \
 
 # php mcrypt
 RUN \
-  apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php7.2-dev libmcrypt-dev && \
-  printf "\n" | pecl install mcrypt-1.0.1 && \
-  bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.2/mods-available/mcrypt.ini" && \
+  apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php7.4-dev libmcrypt-dev && \
+  printf "\n" | pecl install --nodeps mcrypt-snapshot && \
+  bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.4/mods-available/mcrypt.ini" && \
   bash -c "phpenmod mcrypt"
 
 RUN \
-  apt-get remove -y php7.2-dev gcc make autoconf libc-dev pkg-config php-pear && \
+  apt-get remove -y php7.4-dev gcc make autoconf libc-dev pkg-config php-pear && \
   apt-get autoremove -y && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -72,17 +72,17 @@ RUN \
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
   git clone https://github.com/NETivism/docker-sh.git /home/docker && \
-  cp -f /home/docker/php/default72.ini /etc/php/7.2/docker_setup.ini && \
-  ln -s /etc/php/7.2/docker_setup.ini /etc/php/7.2/fpm/conf.d/ && \
-  cp -f /home/docker/php/default72_cli.ini /etc/php/7.2/cli/conf.d/ && \
-  cp -f /home/docker/php/default_opcache_blacklist /etc/php/7.2/opcache_blacklist && \
-  sed -i 's/^listen = .*/listen = 80/g' /etc/php/7.2/fpm/pool.d/www.conf && \
-  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/7.2/fpm/pool.d/www.conf && \
-  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/7.2/fpm/php-fpm.conf && \
-  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/7.2/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/7.2/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/7.2/fpm/pool.d/www.conf && \
-  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/7.2/fpm/pool.d/www.conf
+  cp -f /home/docker/php/default74.ini /etc/php/7.4/docker_setup.ini && \
+  ln -s /etc/php/7.4/docker_setup.ini /etc/php/7.4/fpm/conf.d/ && \
+  cp -f /home/docker/php/default74_cli.ini /etc/php/7.4/cli/conf.d/ && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php/7.4/opcache_blacklist && \
+  sed -i 's/^listen = .*/listen = 80/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/7.4/fpm/php-fpm.conf && \
+  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/7.4/fpm/pool.d/www.conf
 
 
 COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
@@ -90,6 +90,13 @@ COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
 COPY container/supervisord/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN \
   mkdir -p /run/php && chmod 777 /run/php
+
+RUN \
+  echo "source /usr/share/vim/vim80/defaults.vim" > /etc/vim/vimrc.local && \
+  echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
+  echo "if has('mouse')" >> /etc/vim/vimrc.local && \
+  echo "  set mouse=" >> /etc/vim/vimrc.local && \
+  echo "endif" >> /etc/vim/vimrc.local
 
 ### END
 WORKDIR /var/www/html
