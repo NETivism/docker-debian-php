@@ -59,7 +59,7 @@ RUN \
 RUN \
   apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php7.3-dev libmcrypt-dev && \
   printf "\n" | pecl install --nodeps mcrypt-snapshot && \
-  bash -c "echo extension=/usr/lib/php/20170718/mcrypt.so > /etc/php/7.3/mods-available/mcrypt.ini" && \
+  bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/mods-available/mcrypt.ini" && \
   bash -c "phpenmod mcrypt"
 
 RUN \
