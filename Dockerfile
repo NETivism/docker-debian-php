@@ -96,7 +96,7 @@ RUN \
 ### develop tools
 ENV \
   PATH=$PATH:/root/phpunit \
-  PHANTOMJS_VERSION=1.9.7
+  PHANTOMJS_VERSION=2.1.1
 
 #xdebug
 RUN \
