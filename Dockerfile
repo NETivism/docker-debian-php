@@ -93,7 +93,7 @@ RUN \
   mkdir -p /run/php && chmod 777 /run/php
 
 RUN \
-  echo "source /usr/share/vim/vim80/defaults.vim" > /etc/vim/vimrc.local && \
+  echo "source /usr/share/vim/vim81/defaults.vim" > /etc/vim/vimrc.local && \
   echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
   echo "if has('mouse')" >> /etc/vim/vimrc.local && \
   echo "  set mouse=" >> /etc/vim/vimrc.local && \
