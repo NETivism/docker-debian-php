@@ -14,7 +14,7 @@ RUN \
     echo "deb-src https://packages.sury.org/php/ buster main" >> phpsury.list && \
     wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
     apt-get update && \
-    apt-get install -y wget mariadb-server gcc make autoconf libc-dev pkg-config
+    apt-get install -y wget mariadb-server mariadb-backup gcc make autoconf libc-dev pkg-config google-perftools qpdf
 
 
 WORKDIR /
@@ -32,6 +32,9 @@ RUN \
     php7.3-cli \
     php7.3-fpm \
     php7.3-zip \
+    php7.3-bz2 \
+    php7.3-ssh2 \
+    php7.3-yaml \
     curl \
     vim \
     git-core
