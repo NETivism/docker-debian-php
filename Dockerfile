@@ -14,7 +14,7 @@ RUN \
     echo "deb-src https://packages.sury.org/php/ buster main" >> phpsury.list && \
     wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
     apt-get update && \
-    apt-get install -y wget mariadb-server gcc make autoconf libc-dev pkg-config
+    apt-get install -y wget mariadb-server mariadb-backup gcc make autoconf libc-dev pkg-config google-perftools qpdf
 
 
 WORKDIR /
@@ -32,6 +32,9 @@ RUN \
     php7.4-cli \
     php7.4-fpm \
     php7.4-zip \
+    php7.4-bz2 \
+    php7.4-ssh2 \
+    php7.4-yaml \
     curl \
     vim \
     git-core
@@ -90,7 +93,7 @@ RUN \
   mkdir -p /run/php && chmod 777 /run/php
 
 RUN \
-  echo "source /usr/share/vim/vim80/defaults.vim" > /etc/vim/vimrc.local && \
+  echo "source /usr/share/vim/vim81/defaults.vim" > /etc/vim/vimrc.local && \
   echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
   echo "if has('mouse')" >> /etc/vim/vimrc.local && \
   echo "  set mouse=" >> /etc/vim/vimrc.local && \
