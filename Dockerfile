@@ -139,6 +139,21 @@ RUN \
   apt-get autoremove -y && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# npm / nodejs
+RUN \
+  cd /tmp && \
+  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+  apt-get install -y nodejs && \
+  curl https://www.npmjs.com/install.sh | sh && \
+  node -v && npm -v
+
+# playwright
+RUN \
+  sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list && apt-get update && \
+  mkdir -p /tmp/playwright && cd /tmp/playwright && \
+  npm install -g -D @playwright/test && \
+  npx playwright install --with-deps chromium
+
 ### END
 WORKDIR /var/www/html
 ENV TERM=xterm
