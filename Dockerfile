@@ -99,6 +99,7 @@ RUN \
   echo "  set mouse=" >> /etc/vim/vimrc.local && \
   echo "endif" >> /etc/vim/vimrc.local
 
+
 ### END
 WORKDIR /var/www/html
 ENV TERM=xterm
