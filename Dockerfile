@@ -21,20 +21,20 @@ WORKDIR /
 RUN \
   apt-get install -y \
     rsyslog \
-    php7.3 \
-    php7.3-curl \
-    php7.3-imap \
-    php7.3-gd \
-    php7.3-mysql \
-    php7.3-mbstring \
-    php7.3-xml \
-    php7.3-memcached \
-    php7.3-cli \
-    php7.3-fpm \
-    php7.3-zip \
-    php7.3-bz2 \
-    php7.3-ssh2 \
-    php7.3-yaml \
+    php7.4 \
+    php7.4-curl \
+    php7.4-imap \
+    php7.4-gd \
+    php7.4-mysql \
+    php7.4-mbstring \
+    php7.4-xml \
+    php7.4-memcached \
+    php7.4-cli \
+    php7.4-fpm \
+    php7.4-zip \
+    php7.4-bz2 \
+    php7.4-ssh2 \
+    php7.4-yaml \
     curl \
     vim \
     git-core
@@ -58,9 +58,9 @@ RUN \
 
 # php mcrypt
 RUN \
-  apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php7.3-dev libmcrypt-dev && \
+  apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php7.4-dev libmcrypt-dev && \
   printf "\n" | pecl install --nodeps mcrypt-snapshot && \
-  bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.3/mods-available/mcrypt.ini" && \
+  bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.4/mods-available/mcrypt.ini" && \
   bash -c "phpenmod mcrypt"
 
 
@@ -69,17 +69,17 @@ RUN \
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
   git clone https://github.com/NETivism/docker-sh.git /home/docker && \
-  cp -f /home/docker/php/default73.ini /etc/php/7.3/docker_setup.ini && \
-  ln -s /etc/php/7.3/docker_setup.ini /etc/php/7.3/fpm/conf.d/ && \
-  cp -f /home/docker/php/default73_cli.ini /etc/php/7.3/cli/conf.d/ && \
-  cp -f /home/docker/php/default_opcache_blacklist /etc/php/7.3/opcache_blacklist && \
-  sed -i 's/^listen = .*/listen = 80/g' /etc/php/7.3/fpm/pool.d/www.conf && \
-  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/7.3/fpm/pool.d/www.conf && \
-  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/7.3/fpm/php-fpm.conf && \
-  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/7.3/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/7.3/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/7.3/fpm/pool.d/www.conf && \
-  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/7.3/fpm/pool.d/www.conf
+  cp -f /home/docker/php/default73.ini /etc/php/7.4/docker_setup.ini && \
+  ln -s /etc/php/7.4/docker_setup.ini /etc/php/7.4/fpm/conf.d/ && \
+  cp -f /home/docker/php/default73_cli.ini /etc/php/7.4/cli/conf.d/ && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php/7.4/opcache_blacklist && \
+  sed -i 's/^listen = .*/listen = 80/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/7.4/fpm/php-fpm.conf && \
+  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/7.4/fpm/pool.d/www.conf
 
 COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
 COPY container/rsyslogd/rsyslog.conf /etc/rsyslog.conf
@@ -103,11 +103,11 @@ ENV \
 RUN \
   mkdir -p /var/www/html/log/xdebug && chown -R www-data:www-data /var/www/html/log/xdebug && \
   apt-get update && \
-  apt-get install -y php7.3-cgi net-tools && \
+  apt-get install -y php7.4-cgi net-tools && \
   pecl install xdebug && \
-  bash -c "echo zend_extension=/usr/lib/php/20180731/xdebug.so > /etc/php/7.3/mods-available/xdebug.ini" && \
+  bash -c "echo zend_extension=/usr/lib/php/20180731/xdebug.so > /etc/php/7.4/mods-available/xdebug.ini" && \
   bash -c "phpenmod xdebug" && \
-  cp -f /home/docker/php/develop.ini /etc/php/7.3/fpm/conf.d/x-develop.ini
+  cp -f /home/docker/php/develop.ini /etc/php/7.4/fpm/conf.d/x-develop.ini
 
 #phpunit
 RUN \
@@ -135,7 +135,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 RUN \
-  apt-get remove -y php7.3-dev gcc make autoconf libc-dev pkg-config php-pear && \
+  apt-get remove -y php7.4-dev gcc make autoconf libc-dev pkg-config php-pear && \
   apt-get autoremove -y && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
