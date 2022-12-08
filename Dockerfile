@@ -60,7 +60,7 @@ RUN \
 RUN \
   apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php7.4-dev libmcrypt-dev && \
   printf "\n" | pecl install --nodeps mcrypt-snapshot && \
-  bash -c "echo extension=/usr/lib/php/20180731/mcrypt.so > /etc/php/7.4/mods-available/mcrypt.ini" && \
+  bash -c "echo extension=mcrypt.so > /etc/php/7.4/mods-available/mcrypt.ini" && \
   bash -c "phpenmod mcrypt"
 
 
@@ -105,7 +105,7 @@ RUN \
   apt-get update && \
   apt-get install -y php7.4-cgi net-tools && \
   pecl install xdebug && \
-  bash -c "echo zend_extension=/usr/lib/php/20180731/xdebug.so > /etc/php/7.4/mods-available/xdebug.ini" && \
+  bash -c "echo zend_extension=xdebug.so > /etc/php/7.4/mods-available/xdebug.ini" && \
   bash -c "phpenmod xdebug" && \
   cp -f /home/docker/php/develop.ini /etc/php/7.4/fpm/conf.d/x-develop.ini
 
