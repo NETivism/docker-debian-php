@@ -104,7 +104,7 @@ RUN \
   mkdir -p /var/www/html/log/xdebug && chown -R www-data:www-data /var/www/html/log/xdebug && \
   apt-get update && \
   apt-get install -y php7.4-cgi net-tools && \
-  pecl install xdebug && \
+  pecl install xdebug-3.1.6 && \
   bash -c "echo zend_extension=xdebug.so > /etc/php/7.4/mods-available/xdebug.ini" && \
   bash -c "phpenmod xdebug" && \
   cp -f /home/docker/php/develop.ini /etc/php/7.4/fpm/conf.d/x-develop.ini
