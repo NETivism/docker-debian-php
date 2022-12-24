@@ -34,7 +34,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: |
-            netivism/${{ github.repository }}
+            ${{ github.repository }}
             ghcr.io/${{ github.repository }}
 
 
