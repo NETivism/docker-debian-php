@@ -62,9 +62,9 @@ RUN \
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
   git clone https://github.com/NETivism/docker-sh.git /home/docker && \
-  cp -f /home/docker/php/default74.ini /etc/php/8.2/docker_setup.ini && \
+  cp -f /home/docker/php/default82.ini /etc/php/8.2/docker_setup.ini && \
   ln -s /etc/php/8.2/docker_setup.ini /etc/php/8.2/fpm/conf.d/ && \
-  cp -f /home/docker/php/default74_cli.ini /etc/php/8.2/cli/conf.d/ && \
+  cp -f /home/docker/php/default82_cli.ini /etc/php/8.2/cli/conf.d/ && \
   cp -f /home/docker/php/default_opcache_blacklist /etc/php/8.2/opcache_blacklist && \
   sed -i 's/^listen = .*/listen = 80/g' /etc/php/8.2/fpm/pool.d/www.conf && \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/8.2/fpm/pool.d/www.conf && \
