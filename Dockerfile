@@ -114,8 +114,6 @@ RUN \
   mkdir -p /root/phpunit/extensions && \
   wget -O /root/phpunit/phpunit https://phar.phpunit.de/phpunit-7.phar && \
   chmod +x /root/phpunit/phpunit && \
-  wget -O /root/phpunit/extensions/dbunit.phar https://phar.phpunit.de/dbunit.phar && \
-  chmod +x /root/phpunit/extensions/dbunit.phar && \
   cp /home/docker/php/phpunit.xml /root/phpunit/ && \
   echo "alias phpunit='phpunit -c ~/phpunit/phpunit.xml'" > /root/.bashrc
 
