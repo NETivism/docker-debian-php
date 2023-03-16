@@ -1,4 +1,4 @@
-FROM netivism/docker-debian-base:bullseye
+FROM ghcr.io/netivism/docker-debian-base:bullseye
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
