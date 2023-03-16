@@ -1,4 +1,4 @@
-FROM netivism/docker-debian-base:buster
+FROM ghcr.io/netivism/docker-debian-base:buster
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
