@@ -5,18 +5,22 @@ ENV \
   COMPOSER_HOME=/root/.composer \
   PATH=/root/.composer/vendor/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-#mariadb
-WORKDIR /etc/apt/sources.list.d
+# basic packages install
 RUN \
     apt-get update && \
-    apt-get install -y apt-transport-https wget gnupg && \
+    apt-get install -y rsyslog apt-transport-https wget gnupg gcc make autoconf libc-dev pkg-config google-perftools qpdf curl vim git-core supervisor procps
+
+# add PHP sury
+WORKDIR /etc/apt/sources.list.d
+RUN \
     echo "deb https://packages.sury.org/php/ bullseye main" > phpsury.list && \
     echo "deb-src https://packages.sury.org/php/ bullseye main" >> phpsury.list && \
     wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
-    apt-get update && \
-    apt-get install -y wget mariadb-server mariadb-backup gcc make autoconf libc-dev pkg-config google-perftools qpdf
+    apt-get update
 
-RUN apt-get install -y supervisor procps
+#mariadb
+RUN \
+    apt-get install -y wget mariadb-server mariadb-backup mariadb-client
 
 # wkhtmltopdf
 WORKDIR /tmp
@@ -26,12 +30,10 @@ RUN \
   dpkg -i wkhtmltox.deb && \
   rm -f wkhtmltox.deb
 
-
 WORKDIR /
 RUN \
   apt-get update && \
   apt-get install -y \
-    rsyslog \
     php8.1 \
     php8.1-curl \
     php8.1-imap \
@@ -45,14 +47,11 @@ RUN \
     php8.1-zip \
     php8.1-bz2 \
     php8.1-ssh2 \
-    php8.1-yaml \
-    curl \
-    vim \
-    git-core
+    php8.1-yaml
 
 RUN \
   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-  composer global require drush/drush:8.3.3 && \
+  composer global require drush/drush:8.4.12 && \
   cd /root/.composer && \
   find . | grep .git | xargs rm -rf && \
   composer clearcache
@@ -93,4 +92,3 @@ RUN \
 WORKDIR /var/www/html
 ENV TERM=xterm
 CMD ["/usr/bin/supervisord"]
-
