@@ -9,7 +9,7 @@ jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
-      ontents: read
+      contents: read
       packages: write
 
     steps:
