@@ -19,6 +19,13 @@ mariadb_error() {
 
 mariadb_do_upgrade() {
   mariadb_note "[Perform Mariadb System Table Upgrade]"
+  mariadb_note "Delete exists innodb redo log due to block of upgrade"
+  if [ -f /var/lib/mysql/ib_logfile0 ]; then
+    mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.old
+  fi
+  if [ -f /var/lib/mysql/ib_logfile1 ]; then
+    mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.old
+  fi
   mariadb_note "Waiting temporary process start up ..."
   mysqld \
     --skip-networking \
@@ -44,6 +51,12 @@ mariadb_do_upgrade() {
   mariadb_note "Upgrading system tables ..."
   mysql_upgrade -uroot -p$INIT_PASSWD --upgrade-system-tables
   mariadb_note "Upgrading completed."
+  if [ -f /var/lib/mysql/ib_logfile0.old ]; then
+    rm /var/lib/mysql/ib_logfile0.old
+  fi
+  if [ -f /var/lib/mysql/ib_logfile1.old ]; then
+    rm /var/lib/mysql/ib_logfile1.old
+  fi
   kill "$MARIADB_PID"
   wait "$MARIADB_PID"
 }
