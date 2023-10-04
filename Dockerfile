@@ -101,7 +101,7 @@ RUN \
 RUN \
   mkdir -p /var/www/html/log/xdebug && chown -R www-data:www-data /var/www/html/log/xdebug && \
   pecl install xdebug-3.2.2 && \
-  bash -c "echo zend_extension=xdebug.so > /etc/php/7.4/mods-available/xdebug.ini" && \
+  bash -c "echo zend_extension=xdebug.so > /etc/php/8.1/mods-available/xdebug.ini" && \
   bash -c "phpenmod xdebug" && \
   cp -f /home/docker/php/develop.ini /etc/php/8.1/fpm/conf.d/x-develop.ini
 
