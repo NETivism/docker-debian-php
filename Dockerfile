@@ -72,7 +72,7 @@ RUN \
   cp -f /home/docker/php/default74.ini /etc/php/7.4/docker_setup.ini && \
   ln -s /etc/php/7.4/docker_setup.ini /etc/php/7.4/fpm/conf.d/ && \
   cp -f /home/docker/php/default74_cli.ini /etc/php/7.4/cli/conf.d/ && \
-  cp -f /home/docker/php/default_opcache_blacklist /etc/php/7.4/opcache_blacklist && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php/opcache_blacklist && \
   sed -i 's/^listen = .*/listen = 80/g' /etc/php/7.4/fpm/pool.d/www.conf && \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/7.4/fpm/pool.d/www.conf && \
   sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/7.4/fpm/php-fpm.conf && \
