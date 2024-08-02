@@ -1,4 +1,4 @@
-FROM ghcr.io/netivism/docker-debian-base:buster
+FROM ghcr.io/netivism/docker-debian-base:bullseye
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
@@ -10,8 +10,8 @@ WORKDIR /etc/apt/sources.list.d
 RUN \
     apt-get update && \
     apt-get install -y apt-transport-https wget gnupg && \
-    echo "deb https://packages.sury.org/php/ buster main" > phpsury.list && \
-    echo "deb-src https://packages.sury.org/php/ buster main" >> phpsury.list && \
+    echo "deb https://packages.sury.org/php/ bullseye main" > phpsury.list && \
+    echo "deb-src https://packages.sury.org/php/ bullseye main" >> phpsury.list && \
     wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
     apt-get update && \
     apt-get install -y wget mariadb-server mariadb-backup gcc make autoconf libc-dev pkg-config google-perftools qpdf
