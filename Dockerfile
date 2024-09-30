@@ -45,7 +45,7 @@ RUN \
     php8.3-cli \
     php8.3-fpm \
     php8.3-zip \
-    php8.3-bz2 \docker-debian-php
+    php8.3-bz2 \
     php8.3-ssh2 \
     php8.3-yaml
 
