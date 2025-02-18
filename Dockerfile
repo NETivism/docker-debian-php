@@ -98,7 +98,7 @@ RUN \
   apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php8.3-dev libmcrypt-dev php8.3-cgi net-tools
 RUN \
   mkdir -p /var/www/html/log/xdebug && chown -R www-data:www-data /var/www/html/log/xdebug && \
-  pecl install xdebug-3.2.2 && \
+  pecl install xdebug && \
   bash -c "echo zend_extension=xdebug.so > /etc/php/8.3/mods-available/xdebug.ini" && \
   bash -c "phpenmod xdebug" && \
   cp -f /home/docker/php/develop.ini /etc/php/8.3/fpm/conf.d/x-develop.ini
