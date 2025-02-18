@@ -2,7 +2,7 @@ name: Create and publish a Docker image
 
 on:
   push:
-    branches: ['master','8.2','8.1','8.0','7.4','7.3','7.2','develop']
+    branches: ['master','8.3','8.2','8.1','8.0','7.4','7.3','7.2','develop']
   workflow_dispatch:
 
 jobs:
@@ -53,4 +53,3 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
