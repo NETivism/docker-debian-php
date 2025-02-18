@@ -95,13 +95,13 @@ ENV \
 #xdebug
 RUN \
   apt-get update && \
-  apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php8.1-dev libmcrypt-dev php8.1-cgi net-tools
+  apt-get install -y php-pear gcc make autoconf libc-dev pkg-config php8.3-dev libmcrypt-dev php8.3-cgi net-tools
 RUN \
   mkdir -p /var/www/html/log/xdebug && chown -R www-data:www-data /var/www/html/log/xdebug && \
   pecl install xdebug-3.2.2 && \
-  bash -c "echo zend_extension=xdebug.so > /etc/php/8.1/mods-available/xdebug.ini" && \
+  bash -c "echo zend_extension=xdebug.so > /etc/php/8.3/mods-available/xdebug.ini" && \
   bash -c "phpenmod xdebug" && \
-  cp -f /home/docker/php/develop.ini /etc/php/8.1/fpm/conf.d/x-develop.ini
+  cp -f /home/docker/php/develop.ini /etc/php/8.3/fpm/conf.d/x-develop.ini
 
 #phpunit
 RUN \
@@ -112,7 +112,7 @@ RUN \
   echo "alias phpunit='phpunit -c ~/phpunit/phpunit.xml'" > /root/.bashrc
 
 RUN \
-  apt-get remove -y php8.1-dev gcc make autoconf libc-dev pkg-config php-pear && \
+  apt-get remove -y php8.3-dev gcc make autoconf libc-dev pkg-config php-pear && \
   apt-get autoremove -y && \
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
