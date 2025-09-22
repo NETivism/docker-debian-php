@@ -119,9 +119,9 @@ RUN \
 # npm / nodejs
 RUN \
   cd /tmp && \
-  curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
-  apt-get install -y nodejs && \
-  curl https://www.npmjs.com/install.sh | sh && \
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
+  \. "$HOME/.nvm/nvm.sh" && \
+  nvm install 20 && \
   node -v && npm -v
 
 # playwright
