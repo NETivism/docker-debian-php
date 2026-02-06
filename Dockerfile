@@ -41,7 +41,6 @@ RUN \
 
 RUN \
   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-  composer global require drush/drush:8.3.0 && \
   cd /root/.composer && \
   find . | grep .git | xargs rm -rf && \
   composer clearcache
