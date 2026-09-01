@@ -49,7 +49,7 @@ mariadb_do_upgrade() {
   mariadb_backup_system_table
 
   mariadb_note "Upgrading system tables ..."
-  mysql_upgrade -uroot -p$INIT_PASSWD --upgrade-system-tables
+  mariadb-upgrade -uroot -p$INIT_PASSWD --upgrade-system-tables
   mariadb_note "Upgrading completed."
   if [ -f /var/lib/mysql/ib_logfile0.old ]; then
     rm /var/lib/mysql/ib_logfile0.old

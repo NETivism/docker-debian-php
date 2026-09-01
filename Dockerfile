@@ -1,4 +1,4 @@
-FROM ghcr.io/netivism/docker-debian-base:bullseye
+FROM ghcr.io/netivism/docker-debian-base:trixie
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
@@ -12,11 +12,14 @@ RUN \
 
 # add PHP sury
 WORKDIR /etc/apt/sources.list.d
-RUN \
-    echo "deb https://packages.sury.org/php/ bullseye main" > phpsury.list && \
-    echo "deb-src https://packages.sury.org/php/ bullseye main" >> phpsury.list && \
-    wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
-    apt-get update
+RUN curl -sSL https://packages.sury.org/php/README.txt | bash
+#RUN \
+#  apt-get -y install lsb-release ca-certificates && \
+#  curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb && \
+#  dpkg -i /tmp/debsuryorg-archive-keyring.deb && \
+#  sh -c 'echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/phpsury.list' && \
+#  sh -c 'echo "deb-src [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/phpsury.list' && \
+#  apt-get update
 
 #mariadb
 RUN \
@@ -25,11 +28,13 @@ RUN \
 # wkhtmltopdf
 WORKDIR /tmp
 RUN \
-  apt-get install -y fonts-droid-fallback fontconfig ca-certificates fontconfig libc6 libfreetype6 libjpeg62-turbo libpng16-16 libssl1.1 libstdc++6 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi xfonts-base zlib1g && \
-  wget -nv https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -O wkhtmltox.deb && \
-  dpkg -i wkhtmltox.deb && \
+  apt-get install fonts-droid-fallback fontconfig && \
+  wget -nv https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb -O wkhtmltox.deb && \
+  apt-get update && \
+  apt-get install -y ./wkhtmltox.deb && \
   rm -f wkhtmltox.deb
 
+# php
 WORKDIR /
 RUN \
   apt-get update && \
@@ -117,12 +122,12 @@ RUN \
 
 # npm / nodejs
 RUN \
-  sed -i 's/main$/main contrib non-free/g' /etc/apt/sources.list && apt-get update && \
+  sed -i 's/Components:.*$/Components: main contrib non-free/g' /etc/apt/sources.list.d/debian.sources && apt-get update && \
   cd /tmp && \
   mkdir -p /tmp/playwright && cd /tmp/playwright && \
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && \
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash && \
   \. "$HOME/.nvm/nvm.sh" && \
-  nvm install 20 && \
+  nvm install 24 && \
   node -v && npm -v && \
   npm install -g -D @playwright/test && \
   npx playwright install --with-deps chromium
