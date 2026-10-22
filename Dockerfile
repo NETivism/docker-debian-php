@@ -13,13 +13,6 @@ RUN \
 # add PHP sury
 WORKDIR /etc/apt/sources.list.d
 RUN curl -sSL https://packages.sury.org/php/README.txt | bash
-#RUN \
-#  apt-get -y install lsb-release ca-certificates && \
-#  curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb && \
-#  dpkg -i /tmp/debsuryorg-archive-keyring.deb && \
-#  sh -c 'echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/phpsury.list' && \
-#  sh -c 'echo "deb-src [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/phpsury.list' && \
-#  apt-get update
 
 #mariadb
 RUN \
