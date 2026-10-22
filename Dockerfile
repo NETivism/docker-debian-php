@@ -3,6 +3,7 @@ MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ### END
 WORKDIR /var/www/html
+
 ENV TERM=xterm
 CMD ["/usr/bin/supervisord"]
 
