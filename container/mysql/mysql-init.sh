@@ -19,38 +19,38 @@ mariadb_error() {
 
 mariadb_do_upgrade() {
   mariadb_note "[Perform Mariadb System Table Upgrade]"
-  IFS='.-' read -ra new_version <<< $MARIADB_VERSION
-  if [[ ${new_version[0]} -gt 10 ]] || [[ ${new_version[0]} -eq 10 && ${new_version[1]} -ge 8 ]]; then
-    # MariaDB >= 10.8 refuses to start without redo log, restore it if renamed before
-    if [ ! -f /var/lib/mysql/ib_logfile0 ] && [ -f /var/lib/mysql/ib_logfile0.old ]; then
-      mariadb_note "Restore innodb redo log for MariaDB >= 10.8"
-      mv /var/lib/mysql/ib_logfile0.old /var/lib/mysql/ib_logfile0
-    fi
-  else
-    mariadb_note "Delete exists innodb redo log due to block of upgrade"
-    if [ -f /var/lib/mysql/ib_logfile0 ]; then
-      mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.old
-    fi
-    if [ -f /var/lib/mysql/ib_logfile1 ]; then
-      mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.old
-    fi
+  # never touch redo log, mariadb upgrade it by itself after clean shutdown
+  # restore it if renamed by previous version of this script, MariaDB >= 10.8 refuses to start without it
+  if [ ! -f /var/lib/mysql/ib_logfile0 ] && [ -f /var/lib/mysql/ib_logfile0.old ]; then
+    mariadb_note "Restore innodb redo log"
+    mv /var/lib/mysql/ib_logfile0.old /var/lib/mysql/ib_logfile0
   fi
   mariadb_note "Waiting temporary process start up ..."
+  # slow shutdown after upgrade, purge undo logs and let new innodb settings take effect on next start
   mysqld \
     --skip-networking \
+    --skip-grant-tables \
+    --skip-slave-start \
     --wsrep_on=OFF \
     --expire-logs-days=0 \
     --loose-innodb_buffer_pool_load_at_startup=0 \
+    --loose-innodb_buffer_pool_dump_at_shutdown=0 \
+    --innodb_fast_shutdown=0 \
     --basedir=/usr \
     --datadir=/var/lib/mysql \
     --plugin-dir=/usr/lib/mysql/plugin \
     --user=mysql \
     --log-error=/var/www/html/log/mysql.log &
   MARIADB_PID=$!
+  # stop temporary process and restore datadir owner for previous image when mariadb_error exit
+  trap 'set +e; kill "$MARIADB_PID" 2> /dev/null; wait "$MARIADB_PID"; chown -R "$DATADIR_OWNER" /var/lib/mysql' EXIT
 
-  for i in {30..0}; do
-    if mysql -uroot -p$INIT_PASSWD --database=mysql <<<'SELECT 1' &> /dev/null; then
+  for i in {300..0}; do
+    if mysql --database=mysql <<<'SELECT 1' &> /dev/null; then
       break
+    fi
+    if ! kill -0 "$MARIADB_PID" 2> /dev/null; then
+      mariadb_error "Temporary process exited, check /var/www/html/log/mysql.log. If it shows 'Upgrade after a crash is not supported', start previous image and shutdown cleanly before upgrade."
     fi
     sleep 1
   done
@@ -61,14 +61,10 @@ mariadb_do_upgrade() {
   mariadb_backup_system_table
 
   mariadb_note "Upgrading system tables ..."
-  mariadb-upgrade -uroot -p$INIT_PASSWD --upgrade-system-tables
+  mariadb-upgrade --upgrade-system-tables
   mariadb_note "Upgrading completed."
-  if [ -f /var/lib/mysql/ib_logfile0.old ] && [ -f /var/lib/mysql/ib_logfile0 ]; then
-    rm /var/lib/mysql/ib_logfile0.old
-  fi
-  if [ -f /var/lib/mysql/ib_logfile1.old ]; then
-    rm /var/lib/mysql/ib_logfile1.old
-  fi
+  rm -f /var/lib/mysql/ib_logfile0.old /var/lib/mysql/ib_logfile1.old
+  trap - EXIT
   kill "$MARIADB_PID"
   wait "$MARIADB_PID"
 }
@@ -86,7 +82,7 @@ mariadb_backup_system_table() {
   fi
 
   mariadb_note "Backing up system database to $backup_db ..."
-  if ! mysqldump --skip-lock-tables --replace --databases mysql -uroot -p$INIT_PASSWD mysql | gzip -9 > /var/lib/mysql/${backup_db}; then
+  if ! mysqldump --skip-lock-tables --replace --databases mysql | gzip -9 > /var/lib/mysql/${backup_db}; then
     mariadb_error "Unable backup system database for upgrade from $oldfullversion."
   fi
   mariadb_note "Backup completed."
@@ -140,12 +136,10 @@ mariadb_fix_permission() {
 }
 
 # Config log and run
-if [ ! -d "/var/run/mysqld" ]; then
-  mkdir -p /var/run/mysqld
-  chown mysql:mysql /var/run/mysqld
-  echo "" > /var/www/html/log/mysql.log
-  chown mysql:mysql /var/www/html/log/mysql.log
-fi
+# always fix owner, mysql uid may change between images
+mkdir -p /var/run/mysqld
+touch /var/www/html/log/mysql.log
+chown mysql:mysql /var/run/mysqld /var/www/html/log/mysql.log
 
 if [ ! -d "/var/lib/mysql/mysql" ]; then
   mkdir -p /var/lib/mysql
@@ -178,6 +172,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
   mariadb_note 'MariaDB init process done. Ready for start up.'
   echo
 elif mariadb_upgrade_is_needed; then
+  DATADIR_OWNER=$(stat -c '%u:%g' /var/lib/mysql/mysql)
   mariadb_fix_permission
   mariadb_do_upgrade
   mariadb_fix_permission
