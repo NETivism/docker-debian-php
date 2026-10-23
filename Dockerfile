@@ -61,7 +61,7 @@ RUN \
   cp -f /home/docker/php/default83.ini /etc/php/8.3/docker_setup.ini && \
   ln -s /etc/php/8.3/docker_setup.ini /etc/php/8.3/fpm/conf.d/ && \
   cp -f /home/docker/php/default83_cli.ini /etc/php/8.3/cli/conf.d/ && \
-  cp -f /home/docker/php/default_opcache_blacklist /etc/php/8.3/opcache_blacklist && \
+  cp -f /home/docker/php/default_opcache_blacklist /etc/php/opcache_blacklist && \
   sed -i 's/^listen = .*/listen = 80/g' /etc/php/8.3/fpm/pool.d/www.conf && \
   sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/8.3/fpm/pool.d/www.conf && \
   sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/8.3/fpm/php-fpm.conf && \
@@ -78,7 +78,7 @@ RUN \
   mkdir -p /run/php && chmod 777 /run/php
 
 RUN \
-  echo "source $VIMRUNTIME/defaults.vim" > /etc/vim/vimrc.local && \
+  echo 'source $VIMRUNTIME/defaults.vim' > /etc/vim/vimrc.local && \
   echo "let skip_defaults_vim = 1" >> /etc/vim/vimrc.local && \
   echo "if has('mouse')" >> /etc/vim/vimrc.local && \
   echo "  set mouse=" >> /etc/vim/vimrc.local && \
