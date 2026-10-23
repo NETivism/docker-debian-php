@@ -9,12 +9,15 @@ ENV \
 WORKDIR /etc/apt/sources.list.d
 RUN \
     apt-get update && \
-    apt-get install -y apt-transport-https wget gnupg && \
+    apt-get install -y apt-transport-https wget gnupg curl && \
     apt-get install -y wget mariadb-server mariadb-backup gcc make autoconf libc-dev pkg-config google-perftools qpdf
 
+# add PHP sury
+RUN curl -sSL https://packages.sury.org/php/README.txt | bash
 
 WORKDIR /
 RUN \
+  apt-get update && \
   apt-get install -y \
     rsyslog \
     php7.4 \
