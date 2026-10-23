@@ -1,4 +1,4 @@
-FROM ghcr.io/netivism/docker-debian-base:bullseye
+FROM ghcr.io/netivism/docker-debian-base:trixie
 MAINTAINER Jimmy Huang <jimmy@netivism.com.tw>
 
 ENV \
@@ -12,11 +12,7 @@ RUN \
 
 # add PHP sury
 WORKDIR /etc/apt/sources.list.d
-RUN \
-    echo "deb https://packages.sury.org/php/ bullseye main" > phpsury.list && \
-    echo "deb-src https://packages.sury.org/php/ bullseye main" >> phpsury.list && \
-    wget https://packages.sury.org/php/apt.gpg  && apt-key add apt.gpg && rm -f apt.gpg && \
-    apt-get update
+RUN curl -sSL https://packages.sury.org/php/README.txt | bash
 
 #mariadb
 RUN \
@@ -25,11 +21,13 @@ RUN \
 # wkhtmltopdf
 WORKDIR /tmp
 RUN \
-  apt-get install -y fonts-droid-fallback fontconfig ca-certificates fontconfig libc6 libfreetype6 libjpeg62-turbo libpng16-16 libssl1.1 libstdc++6 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi xfonts-base zlib1g && \
-  wget -nv https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.buster_amd64.deb -O wkhtmltox.deb && \
-  dpkg -i wkhtmltox.deb && \
+  apt-get install -y fonts-droid-fallback fontconfig && \
+  wget -nv https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb -O wkhtmltox.deb && \
+  apt-get update && \
+  apt-get install -y ./wkhtmltox.deb && \
   rm -f wkhtmltox.deb
 
+# php
 WORKDIR /
 RUN \
   apt-get update && \
