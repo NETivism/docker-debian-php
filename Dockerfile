@@ -32,19 +32,19 @@ WORKDIR /
 RUN \
   apt-get update && \
   apt-get install -y \
-    php8.4 \
-    php8.4-curl \
-    php8.4-gd \
-    php8.4-mysql \
-    php8.4-mbstring \
-    php8.4-xml \
-    php8.4-memcached \
-    php8.4-cli \
-    php8.4-fpm \
-    php8.4-zip \
-    php8.4-bz2 \
-    php8.4-ssh2 \
-    php8.4-yaml
+    php8.5 \
+    php8.5-curl \
+    php8.5-gd \
+    php8.5-mysql \
+    php8.5-mbstring \
+    php8.5-xml \
+    php8.5-memcached \
+    php8.5-cli \
+    php8.5-fpm \
+    php8.5-zip \
+    php8.5-bz2 \
+    php8.5-ssh2 \
+    php8.5-yaml
 
 RUN \
   curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
@@ -57,17 +57,17 @@ RUN \
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
   git clone https://github.com/NETivism/docker-sh.git /home/docker && \
-  cp -f /home/docker/php/default84.ini /etc/php/8.4/docker_setup.ini && \
-  ln -s /etc/php/8.4/docker_setup.ini /etc/php/8.4/fpm/conf.d/ && \
-  cp -f /home/docker/php/default84_cli.ini /etc/php/8.4/cli/conf.d/ && \
+  cp -f /home/docker/php/default85.ini /etc/php/8.5/docker_setup.ini && \
+  ln -s /etc/php/8.5/docker_setup.ini /etc/php/8.5/fpm/conf.d/ && \
+  cp -f /home/docker/php/default85_cli.ini /etc/php/8.5/cli/conf.d/ && \
   cp -f /home/docker/php/default_opcache_blacklist /etc/php/opcache_blacklist && \
-  sed -i 's/^listen = .*/listen = 80/g' /etc/php/8.4/fpm/pool.d/www.conf && \
-  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/8.4/fpm/pool.d/www.conf && \
-  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/8.4/fpm/php-fpm.conf && \
-  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/8.4/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/8.4/fpm/pool.d/www.conf && \
-  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/8.4/fpm/pool.d/www.conf && \
-  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/8.4/fpm/pool.d/www.conf
+  sed -i 's/^listen = .*/listen = 80/g' /etc/php/8.5/fpm/pool.d/www.conf && \
+  sed -i 's/^pm = .*/pm = ondemand/g' /etc/php/8.5/fpm/pool.d/www.conf && \
+  sed -i 's/;daemonize = .*/daemonize = no/g' /etc/php/8.5/fpm/php-fpm.conf && \
+  sed -i 's/^pm\.max_children = .*/pm.max_children = 8/g' /etc/php/8.5/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.process_idle_timeout = .*/pm.process_idle_timeout = 15s/g' /etc/php/8.5/fpm/pool.d/www.conf && \
+  sed -i 's/^;pm\.max_requests = .*/pm.max_requests = 50/g' /etc/php/8.5/fpm/pool.d/www.conf && \
+  sed -i 's/^;request_terminate_timeout = .*/request_terminate_timeout = 7200/g' /etc/php/8.5/fpm/pool.d/www.conf
 
 
 COPY container/mysql/mysql-init.sh /usr/local/bin/mysql-init.sh
