@@ -42,8 +42,14 @@ mariadb_do_upgrade() {
     --user=mysql \
     --log-error=/var/www/html/log/mysql.log &
   MARIADB_PID=$!
+  # stop temporary process when script exit by error, or it will hold the lock of datadir
+  trap 'kill "$MARIADB_PID" 2> /dev/null; wait "$MARIADB_PID" 2> /dev/null' EXIT
 
   for i in {30..0}; do
+    # make sure SELECT 1 is answered by our temporary process, not other process using the same socket
+    if ! kill -0 "$MARIADB_PID" 2> /dev/null; then
+      mariadb_error 'Temporary process exited unexpectedly.'
+    fi
     if mysql -uroot -p$INIT_PASSWD --database=mysql <<<'SELECT 1' &> /dev/null; then
       break
     fi
@@ -64,6 +70,7 @@ mariadb_do_upgrade() {
   if [ -f /var/lib/mysql/ib_logfile1.old ]; then
     rm /var/lib/mysql/ib_logfile1.old
   fi
+  trap - EXIT
   kill "$MARIADB_PID"
   wait "$MARIADB_PID"
 }
