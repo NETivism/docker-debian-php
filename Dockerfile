@@ -8,7 +8,7 @@ ENV \
 # basic packages install
 RUN \
     apt-get update && \
-    apt-get install -y rsyslog apt-transport-https wget gnupg gcc make autoconf libc-dev pkg-config google-perftools qpdf curl vim git-core supervisor procps
+    apt-get install -y rsyslog apt-transport-https wget gnupg gcc make autoconf libc-dev pkg-config qpdf curl vim git-core supervisor procps
 
 # add PHP sury
 WORKDIR /etc/apt/sources.list.d
@@ -16,7 +16,7 @@ RUN curl -sSL https://packages.sury.org/php/README.txt | bash
 
 #mariadb
 RUN \
-    apt-get install -y wget mariadb-server mariadb-backup mariadb-client
+    apt-get install -y wget mariadb-server mariadb-backup mariadb-client libjemalloc2
 
 # wkhtmltopdf
 WORKDIR /tmp

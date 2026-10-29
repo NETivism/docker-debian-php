@@ -19,13 +19,8 @@ mariadb_error() {
 
 mariadb_do_upgrade() {
   mariadb_note "[Perform Mariadb System Table Upgrade]"
-  IFS='.-' read -ra new_version <<< $MARIADB_VERSION
-  if [[ ${new_version[0]} -gt 10 ]] || [[ ${new_version[0]} -eq 10 && ${new_version[1]} -ge 8 ]]; then
-    # MariaDB >= 10.8 refuses to start without redo log, restore it if renamed before
-    if [ ! -f /var/lib/mysql/ib_logfile0 ] && [ -f /var/lib/mysql/ib_logfile0.old ]; then
-      mariadb_note "Restore innodb redo log for MariaDB >= 10.8"
-      mv /var/lib/mysql/ib_logfile0.old /var/lib/mysql/ib_logfile0
-    fi
+  if mariadb_redo_log_required; then
+    mariadb_restore_redo_log
   else
     mariadb_note "Delete exists innodb redo log due to block of upgrade"
     if [ -f /var/lib/mysql/ib_logfile0 ]; then
@@ -98,6 +93,21 @@ mariadb_version() {
   echo -n "${maria_version}-MariaDB"
 }
 
+mariadb_redo_log_required() {
+  # MariaDB >= 10.8 refuses to start without redo log
+  local new_version
+  IFS='.-' read -ra new_version <<< "$(mariadb_version)"
+  [[ ${new_version[0]} -gt 10 ]] || [[ ${new_version[0]} -eq 10 && ${new_version[1]} -ge 8 ]]
+}
+
+mariadb_restore_redo_log() {
+  # redo log may be renamed by previous upgrade, restore it before any start up
+  if [ ! -f /var/lib/mysql/ib_logfile0 ] && [ -f /var/lib/mysql/ib_logfile0.old ]; then
+    mariadb_note "Restore innodb redo log for MariaDB >= 10.8"
+    mv /var/lib/mysql/ib_logfile0.old /var/lib/mysql/ib_logfile0
+  fi
+}
+
 mariadb_upgrade_is_needed() {
   # 0 is true, 1 is false
   if [ ! -d "/var/lib/mysql/mysql" ]; then
@@ -144,6 +154,10 @@ if [ ! -d "/var/run/mysqld" ]; then
   mkdir -p /var/run/mysqld
   chown mysql:mysql /var/run/mysqld
   echo "" > /var/www/html/log/mysql.log
+fi
+# log dir is mounted from host, owner may be changed outside container
+if [ ! -f /var/www/html/log/mysql.log ] || [ "$(stat -c %U /var/www/html/log/mysql.log)" != "mysql" ]; then
+  touch /var/www/html/log/mysql.log
   chown mysql:mysql /var/www/html/log/mysql.log
 fi
 
@@ -182,8 +196,17 @@ elif mariadb_upgrade_is_needed; then
   mariadb_do_upgrade
   mariadb_fix_permission
 else
+  if mariadb_redo_log_required; then
+    mariadb_restore_redo_log
+  fi
   mariadb_note 'MariaDB ready for start up'
 fi
 
-mariadb_note 'Perform MariadB process start using libtcmalloc_minimal ...'
-exec env LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 "mysqld" --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/www/html/log/mysql.log
+MALLOC_LIB=/usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2
+if [ -f "$MALLOC_LIB" ]; then
+  mariadb_note 'Perform MariadB process start using libjemalloc ...'
+  export LD_PRELOAD="$MALLOC_LIB"
+else
+  mariadb_warn "$MALLOC_LIB not found, start MariaDB with default glibc malloc"
+fi
+exec "mysqld" --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=/var/www/html/log/mysql.log
