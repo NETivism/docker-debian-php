@@ -21,7 +21,7 @@ RUN \
 # wkhtmltopdf
 WORKDIR /tmp
 RUN \
-  apt-get install fonts-droid-fallback fontconfig && \
+  apt-get install -y fonts-droid-fallback fontconfig && \
   wget -nv https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb -O wkhtmltox.deb && \
   apt-get update && \
   apt-get install -y ./wkhtmltox.deb && \
