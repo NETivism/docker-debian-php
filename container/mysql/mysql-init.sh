@@ -346,5 +346,11 @@ else
   mariadb_note 'MariaDB ready for start up'
 fi
 
-mariadb_note 'Perform MariadB process start using libtcmalloc_minimal ...'
-exec env LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libtcmalloc_minimal.so.4 "$MARIADBD" --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=$MYSQL_LOG
+MALLOC_LIB=/usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2
+if [ -f "$MALLOC_LIB" ]; then
+  mariadb_note 'Perform MariadB process start using libjemalloc ...'
+  export LD_PRELOAD="$MALLOC_LIB"
+else
+  mariadb_warn "$MALLOC_LIB not found, start MariaDB with default glibc malloc"
+fi
+exec "$MARIADBD" --basedir=/usr --datadir=/var/lib/mysql --plugin-dir=/usr/lib/mysql/plugin --user=mysql --log-error=$MYSQL_LOG
