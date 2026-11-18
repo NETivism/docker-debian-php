@@ -68,9 +68,9 @@ RUN \
 
 ### PHP FPM Config
 # remove default enabled site
+COPY container/php /home/docker/php
 RUN \
   mkdir -p /var/www/html/log/supervisor && \
-  git clone https://github.com/NETivism/docker-sh.git /home/docker && \
   cp -f /home/docker/php/default74.ini /etc/php/7.4/docker_setup.ini && \
   ln -s /etc/php/7.4/docker_setup.ini /etc/php/7.4/fpm/conf.d/ && \
   cp -f /home/docker/php/default74_cli.ini /etc/php/7.4/cli/conf.d/ && \
