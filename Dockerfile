@@ -30,6 +30,17 @@ RUN \
   dpkg -i wkhtmltox.deb && \
   rm -f wkhtmltox.deb
 
+# pdf fonts: default Liberation Sans + Droid Sans Fallback, plus Noto CJK
+RUN \
+  apt-get update && \
+  apt-get install -y --no-install-recommends fonts-liberation fonts-droid-fallback fonts-noto-cjk
+COPY container/fontconfig/09-pdf-default-fonts.conf /etc/fonts/conf.d/09-pdf-default-fonts.conf
+RUN \
+  fc-cache -f && \
+  fc-match Helvetica | grep -q "Liberation Sans" && \
+  fc-list -q "Droid Sans Fallback" && \
+  fc-list -q "Noto Sans CJK TC"
+
 WORKDIR /
 RUN \
   apt-get update && \
